@@ -663,6 +663,11 @@
       background: #f3fbf6;
     }
 
+    .callout.callout-success {
+      border-color: #bfe7c7;
+      background: #eefaf1;
+    }
+
     .callout.callout-warning {
       border-color: #f3dfb2;
       background: #fff9ed;
@@ -676,6 +681,21 @@
     .callout.callout-info {
       border-color: #cde6f2;
       background: #f3fbff;
+    }
+
+    .callout.callout-question {
+      border-color: #d8cef2;
+      background: #f7f3ff;
+    }
+
+    .callout.callout-example {
+      border-color: #e3d3c0;
+      background: #fbf6ef;
+    }
+
+    .callout.callout-quote {
+      border-color: #d7dbe3;
+      background: #f8f9fc;
     }
 
     .slide .md-tag {
@@ -1107,6 +1127,35 @@
         return;
       }
 
+      const calloutTypeMap = {
+        abstract: "info",
+        summary: "info",
+        tldr: "info",
+        info: "info",
+        todo: "note",
+        note: "note",
+        hint: "tip",
+        important: "tip",
+        tip: "tip",
+        success: "success",
+        check: "success",
+        done: "success",
+        question: "question",
+        help: "question",
+        faq: "question",
+        warning: "warning",
+        caution: "warning",
+        attention: "warning",
+        failure: "danger",
+        fail: "danger",
+        missing: "danger",
+        danger: "danger",
+        error: "danger",
+        bug: "danger",
+        example: "example",
+        quote: "quote"
+      };
+
       const blockquotes = Array.from(contentRoot.querySelectorAll("blockquote"));
       blockquotes.forEach((blockquote) => {
         const firstLineNode = blockquote.querySelector("p, div");
@@ -1114,13 +1163,16 @@
           return;
         }
 
-        const firstLineText = (firstLineNode.textContent || "").trim();
-        const match = firstLineText.match(/^\[!([A-Za-z]+)\]([+-])?\s*(.*)$/);
+        const firstLineText = String(firstLineNode.textContent || "")
+          .split(/\r?\n/)[0]
+          .trim();
+        const match = firstLineText.match(/^\s*\[!([A-Za-z-]+)\]([+-])?\s*(.*)$/i);
         if (!match) {
           return;
         }
 
-        const type = match[1].toLowerCase();
+        const rawType = match[1].toLowerCase();
+        const type = calloutTypeMap[rawType] || rawType;
         const fold = match[2] || "";
         const customTitle = (match[3] || "").trim();
         const titleText = customTitle || type;
@@ -1143,7 +1195,7 @@
           blockquote.prepend(title);
         }
 
-        const firstHtml = firstLineNode.innerHTML.replace(/^\[![A-Za-z]+\][+-]?\s*/, "");
+        const firstHtml = firstLineNode.innerHTML.replace(/^\s*\[![A-Za-z-]+\][+-]?\s*/i, "");
         if (firstHtml.trim()) {
           firstLineNode.innerHTML = firstHtml;
         } else {

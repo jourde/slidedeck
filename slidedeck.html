@@ -295,6 +295,46 @@
       height: 82px;
     }
 
+    .duration-bar {
+      width: min(1100px, 100%);
+      padding: 4px 24px 8px;
+    }
+
+    .slide-duration-bar-track {
+      position: absolute;
+      bottom: 4px;
+      left: 24px;
+      right: 24px;
+      height: 4px;
+      background: rgba(110, 174, 232, 0.2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    #durationBar .slide-duration-bar-track {
+      position: static;
+      width: 100%;
+      bottom: auto;
+      left: auto;
+      right: auto;
+      height: 6px;
+    }
+
+    .slide-duration-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 999px;
+      animation-name: slide-duration-fill;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes slide-duration-fill {
+      from { width: 0% }
+      to   { width: 100% }
+    }
+
     .map-toggle {
       position: fixed;
       right: 16px;
@@ -319,17 +359,44 @@
       line-height: 1;
     }
 
-    .map-toggle:hover:not(:disabled) {
+    .duration-bar-toggle {
+      position: fixed;
+      right: 68px;
+      bottom: 14px;
+      border: 0;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #2e3c54;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(21, 34, 54, 0.14);
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+
+    .duration-bar-toggle .material-symbols-outlined {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .map-toggle:hover:not(:disabled),
+    .duration-bar-toggle:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: 0 10px 22px rgba(21, 34, 54, 0.18);
     }
 
-    .map-toggle:disabled {
+    .map-toggle:disabled,
+    .duration-bar-toggle:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
-    .map-toggle:focus-visible {
+    .map-toggle:focus-visible,
+    .duration-bar-toggle:focus-visible {
       outline: 3px solid var(--focus-ring);
       outline-offset: 2px;
     }
@@ -1053,8 +1120,32 @@
     .empty-guide-title {
       font-weight: 700;
       color: #1b2638;
-      margin-bottom: 10px;
       font-size: 0.85rem;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+    }
+
+    .empty-guide-title::-webkit-details-marker {
+      display: none;
+    }
+
+    .empty-guide-title::before {
+      content: "▸";
+      font-size: 0.7rem;
+      color: #8595ac;
+      transition: transform 120ms ease;
+    }
+
+    .empty-guide[open] .empty-guide-title::before {
+      transform: rotate(90deg);
+    }
+
+    .empty-guide[open] .empty-guide-title {
+      margin-bottom: 10px;
     }
 
     .empty-guide pre {
@@ -1247,12 +1338,17 @@
 
       .upload-cta:hover,
       .map-toggle:hover:not(:disabled),
+      .duration-bar-toggle:hover:not(:disabled),
       .search-toggle:hover,
       .delimiter-toggle:hover,
       .arrows-toggle:hover,
       .station:hover,
       .station.active {
         transform: none !important;
+      }
+
+      .slide-duration-bar-track {
+        display: none;
       }
     }
 
@@ -1285,12 +1381,16 @@
     <input id="fileInput" type="file" accept=".md,.markdown,text/markdown,text/plain" />
     <article id="slide" class="slide" aria-live="polite" aria-atomic="true" role="region" aria-label="Slide content" tabindex="-1"></article>
     <nav id="trainMap" class="train-map" aria-label="Slide train map"></nav>
+    <div id="durationBar" class="duration-bar" hidden></div>
     <footer class="app-footer">
       <a class="repo-link" href="https://github.com/jourde/markdown-html-slidedeck" target="_blank" rel="noopener noreferrer">View on GitHub</a>
     </footer>
   </main>
   <button id="mapToggle" class="map-toggle" type="button" aria-label="Show or hide route line" title="Show or hide route line" aria-controls="trainMap" aria-expanded="false">
     <span class="material-symbols-outlined" aria-hidden="true">route</span>
+  </button>
+  <button id="durationBarToggle" class="duration-bar-toggle" type="button" aria-label="Show or hide duration bar" title="Show or hide duration bar" aria-pressed="false" hidden>
+    <span class="material-symbols-outlined" aria-hidden="true">hourglass_empty</span>
   </button>
   <div id="timerChip" class="timer-chip" aria-live="polite" aria-atomic="true" hidden>00:00:00</div>
   <button id="timerToggle" class="timer-toggle" type="button" aria-label="Open timer controls" title="Open timer controls" aria-haspopup="true" aria-controls="timerMenu" aria-expanded="false">
@@ -1389,7 +1489,9 @@
       slideSplitMode: "h1",
       slideDelimiter: "===",
       notesDelimiter: "--",
-      sourceMarkdown: ""
+      sourceMarkdown: "",
+      slideStartedAt: 0,
+      showDurationBar: false
     };
 
     const appEl = document.querySelector(".app");
@@ -1398,6 +1500,7 @@
     const fileInputEl = document.getElementById("fileInput");
     const trainMapEl = document.getElementById("trainMap");
     const mapToggleEl = document.getElementById("mapToggle");
+    const durationBarToggleEl = document.getElementById("durationBarToggle");
     const timerChipEl = document.getElementById("timerChip");
     const clockChipEl = document.getElementById("clockChip");
     const timerToggleEl = document.getElementById("timerToggle");
@@ -2436,19 +2539,20 @@
                   <span>Import MD file</span>
                 </button>
               </div>
-              <div class="empty-guide">
-                <div class="empty-guide-title">Markdown format reference</div>
+              <details class="empty-guide">
+                <summary class="empty-guide-title">Markdown format reference</summary>
                 <pre>${guideExample}</pre>
                 <ul class="empty-guide-legend">
                   ${guideSlideRule}
                   <li><code>${notesDel}</code> separates slide content from speaker notes</li>
                   <li><code>${notesDel} duration: 2m</code> adds a timed duration <em>(e.g. 30s, 1m30s, 2:00)</em></li>
                 </ul>
-              </div>
+              </details>
             </div>
           </div>
         `;
         renderTrainMap();
+        renderDurationBar();
         renderNavArrows();
         announceStatus("No slides loaded. Upload a markdown file.");
         return;
@@ -2460,6 +2564,7 @@
       if (appEl) {
         appEl.classList.remove("show-footer");
       }
+      state.slideStartedAt = Date.now();
       slideEl.innerHTML = `
         <div class="slide-center">
           <div class="slide-content">${state.slides[state.index].html || "<p></p>"}</div>
@@ -2476,6 +2581,7 @@
       updateSlideAlignment();
       slideEl.scrollTop = 0;
       renderTrainMap();
+      renderDurationBar();
       renderNavArrows();
       announceStatus(`Slide ${state.index + 1} of ${state.slides.length}`);
     }
@@ -2522,6 +2628,36 @@
       }
       prevArrowEl.disabled = state.index <= 0;
       nextArrowEl.disabled = state.index >= state.slides.length - 1;
+    }
+
+    function renderDurationBar() {
+      const durationBarEl = document.getElementById("durationBar");
+      if (!durationBarEl) return;
+      durationBarEl.innerHTML = "";
+
+      const hasDurations = state.slides.some(s => s.duration != null);
+      durationBarToggleEl.hidden = !hasDurations || !state.slides.length;
+      durationBarToggleEl.disabled = !hasDurations || !state.slides.length;
+      durationBarToggleEl.setAttribute("aria-pressed", String(state.showDurationBar));
+
+      const currentSlide = state.slides[state.index];
+      const shouldShow = state.showDurationBar && currentSlide && currentSlide.duration != null;
+      durationBarEl.hidden = !shouldShow;
+
+      if (!shouldShow) return;
+
+      const elapsedSecs = Math.min(
+        (Date.now() - state.slideStartedAt) / 1000,
+        currentSlide.duration
+      );
+      const track = document.createElement("div");
+      track.className = "slide-duration-bar-track";
+      const fill = document.createElement("div");
+      fill.className = "slide-duration-bar-fill";
+      fill.style.animationDuration = `${currentSlide.duration}s`;
+      fill.style.animationDelay = `-${elapsedSecs}s`;
+      track.appendChild(fill);
+      durationBarEl.appendChild(track);
     }
 
     function renderTrainMap() {
@@ -2679,6 +2815,11 @@
       state.showTrainMap = !state.showTrainMap;
       renderTrainMap();
       announceStatus(state.showTrainMap ? "Route map shown." : "Route map hidden.");
+    });
+    durationBarToggleEl.addEventListener("click", () => {
+      state.showDurationBar = !state.showDurationBar;
+      renderDurationBar();
+      announceStatus(state.showDurationBar ? "Duration bar shown." : "Duration bar hidden.");
     });
     arrowsToggleEl.addEventListener("click", () => {
       if (!state.slides.length) {

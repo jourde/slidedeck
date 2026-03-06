@@ -312,12 +312,29 @@
     }
 
     #durationBar .slide-duration-bar-track {
+      flex: 1;
       position: static;
-      width: 100%;
       bottom: auto;
       left: auto;
       right: auto;
       height: 6px;
+    }
+
+    .duration-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .duration-bar-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #8595ac;
+      width: 28px;
+      text-align: right;
+      flex-shrink: 0;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
     }
 
     .slide-duration-bar-fill {
@@ -383,20 +400,48 @@
       line-height: 1;
     }
 
+    .global-duration-bar-toggle {
+      position: fixed;
+      right: 120px;
+      bottom: 14px;
+      border: 0;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #2e3c54;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(21, 34, 54, 0.14);
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      z-index: 50;
+    }
+
+    .global-duration-bar-toggle .material-symbols-outlined {
+      font-size: 24px;
+      line-height: 1;
+    }
+
     .map-toggle:hover:not(:disabled),
-    .duration-bar-toggle:hover:not(:disabled) {
+    .duration-bar-toggle:hover:not(:disabled),
+    .global-duration-bar-toggle:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: 0 10px 22px rgba(21, 34, 54, 0.18);
     }
 
     .map-toggle:disabled,
-    .duration-bar-toggle:disabled {
+    .duration-bar-toggle:disabled,
+    .global-duration-bar-toggle:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
     .map-toggle:focus-visible,
-    .duration-bar-toggle:focus-visible {
+    .duration-bar-toggle:focus-visible,
+    .global-duration-bar-toggle:focus-visible {
       outline: 3px solid var(--focus-ring);
       outline-offset: 2px;
     }
@@ -657,132 +702,6 @@
     .arrows-toggle .material-symbols-outlined {
       font-size: 24px;
       line-height: 1;
-    }
-
-    .timer-chip {
-      position: fixed;
-      right: 68px;
-      top: 16px;
-      min-width: 84px;
-      height: 44px;
-      padding: 0 14px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.92);
-      color: #2b3a52;
-      font-size: 0.92rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      box-shadow: 0 8px 20px rgba(21, 34, 54, 0.12);
-      backdrop-filter: blur(8px);
-    }
-
-    .timer-chip[hidden] {
-      display: none;
-    }
-
-    .clock-chip {
-      position: fixed;
-      right: 192px;
-      top: 16px;
-      min-width: 84px;
-      height: 44px;
-      padding: 0 14px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.92);
-      color: #2b3a52;
-      font-size: 0.92rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      box-shadow: 0 8px 20px rgba(21, 34, 54, 0.12);
-      backdrop-filter: blur(8px);
-    }
-
-    .clock-chip[hidden] {
-      display: none;
-    }
-
-    .timer-toggle {
-      position: fixed;
-      right: 16px;
-      top: 16px;
-      border: 0;
-      border-radius: 999px;
-      background: #ffffff;
-      color: #2e3c54;
-      width: 44px;
-      height: 44px;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(21, 34, 54, 0.14);
-      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, color 120ms ease;
-    }
-
-    .timer-toggle.is-running {
-      background: var(--accent);
-      color: #ffffff;
-    }
-
-    .timer-toggle:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 22px rgba(21, 34, 54, 0.18);
-    }
-
-    .timer-toggle:focus-visible {
-      outline: 3px solid var(--focus-ring);
-      outline-offset: 2px;
-    }
-
-    .timer-toggle .material-symbols-outlined {
-      font-size: 24px;
-      line-height: 1;
-    }
-
-    .timer-menu {
-      position: fixed;
-      right: 16px;
-      top: 68px;
-      z-index: 60;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-width: 132px;
-      padding: 8px;
-      border: 1px solid #d5deeb;
-      border-radius: 12px;
-      background: #ffffff;
-      box-shadow: 0 10px 24px rgba(21, 34, 54, 0.16);
-    }
-
-    .timer-menu[hidden] {
-      display: none;
-    }
-
-    .timer-action {
-      width: 100%;
-      height: 34px;
-      border: 1px solid #c9d4e5;
-      border-radius: 8px;
-      background: #fff;
-      color: #2f3d55;
-      cursor: pointer;
-      font-size: 0.84rem;
-      font-weight: 600;
-      text-align: left;
-      padding: 0 10px;
-    }
-
-    .timer-action:focus-visible {
-      outline: 3px solid var(--focus-ring);
-      outline-offset: 1px;
     }
 
     .nav-arrow {
@@ -1389,20 +1308,12 @@
   <button id="mapToggle" class="map-toggle" type="button" aria-label="Show or hide route line" title="Show or hide route line" aria-controls="trainMap" aria-expanded="false">
     <span class="material-symbols-outlined" aria-hidden="true">route</span>
   </button>
+  <button id="globalDurationBarToggle" class="global-duration-bar-toggle" type="button" aria-label="Show or hide global duration bar" title="Show or hide global duration bar" aria-pressed="false" hidden>
+    <span class="material-symbols-outlined" aria-hidden="true">timer</span>
+  </button>
   <button id="durationBarToggle" class="duration-bar-toggle" type="button" aria-label="Show or hide duration bar" title="Show or hide duration bar" aria-pressed="false" hidden>
     <span class="material-symbols-outlined" aria-hidden="true">hourglass_empty</span>
   </button>
-  <div id="timerChip" class="timer-chip" aria-live="polite" aria-atomic="true" hidden>00:00:00</div>
-  <button id="timerToggle" class="timer-toggle" type="button" aria-label="Open timer controls" title="Open timer controls" aria-haspopup="true" aria-controls="timerMenu" aria-expanded="false">
-    <span class="material-symbols-outlined" aria-hidden="true">timer</span>
-  </button>
-  <div id="clockChip" class="clock-chip" aria-live="polite" aria-atomic="true" hidden>00:00:00</div>
-  <section id="timerMenu" class="timer-menu" role="menu" aria-label="Timer controls" hidden>
-    <button id="timerVisibilityAction" class="timer-action" type="button" role="menuitem">Hide</button>
-    <button id="timerPrimaryAction" class="timer-action" type="button" role="menuitem">Start</button>
-    <button id="timerResetAction" class="timer-action" type="button" role="menuitem">Reset</button>
-    <button id="timerModeAction" class="timer-action" type="button" role="menuitem">Show Current Time</button>
-  </section>
   <section id="delimiterPanel" class="delimiter-panel" role="group" aria-label="Delimiter choices" hidden>
     <div>
       <div class="delimiter-section-title">Quick Buttons</div>
@@ -1478,20 +1389,14 @@
         activeIndex: -1,
         panelOpen: false
       },
-      timer: {
-        running: false,
-        startedAt: 0,
-        elapsedMs: 0,
-        visible: false,
-        showClock: false
-      },
       showNavArrows: false,
       slideSplitMode: "h1",
       slideDelimiter: "===",
       notesDelimiter: "--",
       sourceMarkdown: "",
       slideStartedAt: 0,
-      showDurationBar: false
+      showDurationBar: false,
+      showGlobalDurationBar: false
     };
 
     const appEl = document.querySelector(".app");
@@ -1501,14 +1406,7 @@
     const trainMapEl = document.getElementById("trainMap");
     const mapToggleEl = document.getElementById("mapToggle");
     const durationBarToggleEl = document.getElementById("durationBarToggle");
-    const timerChipEl = document.getElementById("timerChip");
-    const clockChipEl = document.getElementById("clockChip");
-    const timerToggleEl = document.getElementById("timerToggle");
-    const timerMenuEl = document.getElementById("timerMenu");
-    const timerPrimaryActionEl = document.getElementById("timerPrimaryAction");
-    const timerModeActionEl = document.getElementById("timerModeAction");
-    const timerVisibilityActionEl = document.getElementById("timerVisibilityAction");
-    const timerResetActionEl = document.getElementById("timerResetAction");
+    const globalDurationBarToggleEl = document.getElementById("globalDurationBarToggle");
     const delimiterToggleEl = document.getElementById("delimiterToggle");
     const delimiterPanelEl = document.getElementById("delimiterPanel");
     const delimiterOptionEls = Array.from(document.querySelectorAll(".delimiter-option"));
@@ -1532,7 +1430,6 @@
       notes: "--"
     };
     let delimiterAnchorEl = null;
-    let timerIntervalId = null;
 
     function announceStatus(message) {
       if (!srStatusEl) {
@@ -1542,112 +1439,6 @@
       window.requestAnimationFrame(() => {
         srStatusEl.textContent = message;
       });
-    }
-
-    function formatElapsedTime(totalMs) {
-      const totalSeconds = Math.max(0, Math.floor(totalMs / 1000));
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
-      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-    }
-
-    function formatCurrentTime() {
-      const now = new Date();
-      return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-    }
-
-    function getTimerElapsedMs() {
-      if (!state.timer.running) {
-        return state.timer.elapsedMs;
-      }
-      return state.timer.elapsedMs + (Date.now() - state.timer.startedAt);
-    }
-
-    function updateTimerUI() {
-      if (timerChipEl) {
-        timerChipEl.textContent = formatElapsedTime(getTimerElapsedMs());
-        timerChipEl.hidden = !state.timer.visible;
-      }
-      if (clockChipEl) {
-        clockChipEl.textContent = formatCurrentTime();
-        clockChipEl.hidden = !state.timer.showClock;
-      }
-      if (timerPrimaryActionEl) {
-        timerPrimaryActionEl.textContent = state.timer.running
-          ? "Pause"
-          : state.timer.elapsedMs
-            ? "Resume"
-            : "Start";
-      }
-      if (timerModeActionEl) {
-        timerModeActionEl.textContent = state.timer.showClock ? "Hide Current Time" : "Show Current Time";
-      }
-      if (timerVisibilityActionEl) {
-        timerVisibilityActionEl.textContent = state.timer.visible ? "Hide" : "Show";
-      }
-      if (timerToggleEl) {
-        timerToggleEl.classList.toggle("is-running", state.timer.running);
-        timerToggleEl.setAttribute("aria-expanded", String(!timerMenuEl.hidden));
-        timerToggleEl.setAttribute("aria-label", "Open timer controls");
-        timerToggleEl.title = "Open timer controls";
-      }
-    }
-
-    function stopTimerTick() {
-      if (timerIntervalId !== null) {
-        window.clearInterval(timerIntervalId);
-        timerIntervalId = null;
-      }
-    }
-
-    function startTimerTick() {
-      stopTimerTick();
-      timerIntervalId = window.setInterval(updateTimerUI, 250);
-    }
-
-    function toggleTimer() {
-      if (state.timer.running) {
-        state.timer.elapsedMs = getTimerElapsedMs();
-        state.timer.running = false;
-        state.timer.startedAt = 0;
-        stopTimerTick();
-        updateTimerUI();
-        announceStatus("Timer paused.");
-        return;
-      }
-
-      state.timer.running = true;
-      state.timer.startedAt = Date.now();
-      startTimerTick();
-      updateTimerUI();
-      announceStatus(state.timer.elapsedMs ? "Timer resumed." : "Timer started.");
-    }
-
-    function resetTimer() {
-      state.timer.running = false;
-      state.timer.startedAt = 0;
-      state.timer.elapsedMs = 0;
-      stopTimerTick();
-      updateTimerUI();
-      announceStatus("Timer reset.");
-    }
-
-    function setTimerMenuOpen(open) {
-      timerMenuEl.hidden = !open;
-      timerToggleEl.setAttribute("aria-expanded", String(open));
-    }
-
-    function toggleTimerMode() {
-      state.timer.showClock = !state.timer.showClock;
-      updateTimerUI();
-      announceStatus(state.timer.showClock ? "Current time shown." : "Current time hidden.");
-    }
-
-    function toggleTimerVisibility() {
-      state.timer.visible = !state.timer.visible;
-      updateTimerUI();
-      announceStatus(state.timer.visible ? "Timer shown." : "Timer hidden.");
     }
 
     function escapeHtml(input) {
@@ -2636,28 +2427,61 @@
       durationBarEl.innerHTML = "";
 
       const hasDurations = state.slides.some(s => s.duration != null);
+      const totalDuration = state.slides.reduce((sum, s) => sum + (s.duration || 0), 0);
+
+      // Per-slide toggle button
       durationBarToggleEl.hidden = !hasDurations || !state.slides.length;
       durationBarToggleEl.disabled = !hasDurations || !state.slides.length;
       durationBarToggleEl.setAttribute("aria-pressed", String(state.showDurationBar));
 
+      // Global toggle button
+      globalDurationBarToggleEl.hidden = totalDuration === 0 || !state.slides.length;
+      globalDurationBarToggleEl.disabled = totalDuration === 0 || !state.slides.length;
+      globalDurationBarToggleEl.setAttribute("aria-pressed", String(state.showGlobalDurationBar));
+
       const currentSlide = state.slides[state.index];
-      const shouldShow = state.showDurationBar && currentSlide && currentSlide.duration != null;
-      durationBarEl.hidden = !shouldShow;
+      const showPerSlide = state.showDurationBar && currentSlide && currentSlide.duration != null;
+      const showGlobal = state.showGlobalDurationBar && totalDuration > 0;
 
-      if (!shouldShow) return;
+      durationBarEl.hidden = !showPerSlide && !showGlobal;
+      if (!showPerSlide && !showGlobal) return;
 
-      const elapsedSecs = Math.min(
-        (Date.now() - state.slideStartedAt) / 1000,
-        currentSlide.duration
-      );
-      const track = document.createElement("div");
-      track.className = "slide-duration-bar-track";
-      const fill = document.createElement("div");
-      fill.className = "slide-duration-bar-fill";
-      fill.style.animationDuration = `${currentSlide.duration}s`;
-      fill.style.animationDelay = `-${elapsedSecs}s`;
-      track.appendChild(fill);
-      durationBarEl.appendChild(track);
+      function makeBarRow(label, durationSecs, elapsedSecs) {
+        const row = document.createElement("div");
+        row.className = "duration-bar-row";
+        const lbl = document.createElement("span");
+        lbl.className = "duration-bar-label";
+        lbl.textContent = label;
+        const track = document.createElement("div");
+        track.className = "slide-duration-bar-track";
+        const fill = document.createElement("div");
+        fill.className = "slide-duration-bar-fill";
+        fill.style.animationDuration = `${durationSecs}s`;
+        fill.style.animationDelay = `-${Math.min(elapsedSecs, durationSecs)}s`;
+        track.appendChild(fill);
+        row.appendChild(lbl);
+        row.appendChild(track);
+        return row;
+      }
+
+      if (showPerSlide) {
+        const elapsedSecs = Math.min(
+          (Date.now() - state.slideStartedAt) / 1000,
+          currentSlide.duration
+        );
+        durationBarEl.appendChild(makeBarRow("Slide", currentSlide.duration, elapsedSecs));
+      }
+
+      if (showGlobal) {
+        const slidesBeforeElapsed = state.slides
+          .slice(0, state.index)
+          .reduce((sum, s) => sum + (s.duration || 0), 0);
+        const currentElapsed = currentSlide && currentSlide.duration
+          ? Math.min((Date.now() - state.slideStartedAt) / 1000, currentSlide.duration)
+          : 0;
+        const globalElapsedSecs = slidesBeforeElapsed + currentElapsed;
+        durationBarEl.appendChild(makeBarRow("Total", totalDuration, globalElapsedSecs));
+      }
     }
 
     function renderTrainMap() {
@@ -2821,6 +2645,11 @@
       renderDurationBar();
       announceStatus(state.showDurationBar ? "Duration bar shown." : "Duration bar hidden.");
     });
+    globalDurationBarToggleEl.addEventListener("click", () => {
+      state.showGlobalDurationBar = !state.showGlobalDurationBar;
+      renderDurationBar();
+      announceStatus(state.showGlobalDurationBar ? "Global duration bar shown." : "Global duration bar hidden.");
+    });
     arrowsToggleEl.addEventListener("click", () => {
       if (!state.slides.length) {
         return;
@@ -2828,25 +2657,6 @@
       state.showNavArrows = !state.showNavArrows;
       renderNavArrows();
       announceStatus(state.showNavArrows ? "Navigation arrows shown." : "Navigation arrows hidden.");
-    });
-    timerToggleEl.addEventListener("click", () => {
-      setTimerMenuOpen(timerMenuEl.hidden);
-    });
-    timerPrimaryActionEl.addEventListener("click", () => {
-      toggleTimer();
-      setTimerMenuOpen(false);
-    });
-    timerModeActionEl.addEventListener("click", () => {
-      toggleTimerMode();
-      setTimerMenuOpen(false);
-    });
-    timerVisibilityActionEl.addEventListener("click", () => {
-      toggleTimerVisibility();
-      setTimerMenuOpen(false);
-    });
-    timerResetActionEl.addEventListener("click", () => {
-      resetTimer();
-      setTimerMenuOpen(false);
     });
     prevArrowEl.addEventListener("click", goPrev);
     nextArrowEl.addEventListener("click", goNext);
@@ -2918,27 +2728,9 @@
       if (event.key === "Escape" && state.search.panelOpen) {
         setSearchPanelOpen(false);
       }
-      if (event.key === "Escape" && !timerMenuEl.hidden) {
-        setTimerMenuOpen(false);
-      }
-    });
-
-    document.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof Node)) {
-        return;
-      }
-      if (timerMenuEl.hidden) {
-        return;
-      }
-      if (timerMenuEl.contains(target) || timerToggleEl.contains(target)) {
-        return;
-      }
-      setTimerMenuOpen(false);
     });
 
     renderDelimiterUI();
-    updateTimerUI();
     window.addEventListener("resize", () => {
       if (!delimiterPanelEl.hidden) {
         positionDelimiterPanel(delimiterAnchorEl);

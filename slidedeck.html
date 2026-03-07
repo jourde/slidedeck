@@ -13,6 +13,7 @@
       --accent: #1c7ed6;
       --accent-hover: #176ab5;
       --focus-ring: #0f62b2;
+      --slide-font: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
     }
 
     * {
@@ -23,7 +24,7 @@
       margin: 0;
       min-height: 100vh;
       color: var(--text);
-      font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+      font-family: var(--slide-font);
       background: radial-gradient(circle at top left, var(--bg-a) 0%, var(--bg-b) 100%);
       overflow: hidden;
     }
@@ -478,6 +479,154 @@
     .search-toggle .material-symbols-outlined {
       font-size: 24px;
       line-height: 1;
+    }
+
+    .settings-toggle {
+      position: fixed;
+      right: 16px;
+      bottom: 170px;
+      border: 0;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #2e3c54;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(21, 34, 54, 0.14);
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+
+    .settings-toggle:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(21, 34, 54, 0.18);
+    }
+
+    .settings-toggle:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .settings-toggle .material-symbols-outlined {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    /* ── Settings panel ── */
+    .settings-panel {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 56;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+      background: #ffffff;
+      border: 1px solid #d5deeb;
+      border-radius: 10px;
+      padding: 8px;
+      min-width: 230px;
+      max-width: min(300px, calc(100vw - 24px));
+      max-height: calc(100vh - 24px);
+      overflow: auto;
+      box-shadow: 0 14px 28px rgba(21, 34, 54, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.95);
+    }
+
+    .settings-panel[hidden] {
+      display: none;
+    }
+
+    .settings-swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+      padding: 2px 2px 4px;
+    }
+
+    .settings-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 100ms ease, border-color 100ms ease;
+      padding: 0;
+    }
+
+    .settings-swatch:hover {
+      transform: scale(1.12);
+    }
+
+    .settings-swatch[aria-pressed="true"] {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--accent);
+    }
+
+    .settings-swatch:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .settings-fonts {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .settings-font-opt {
+      text-align: left;
+      border: 1px solid #d5deeb;
+      border-radius: 8px;
+      padding: 7px 10px;
+      background: #ffffff;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--text);
+      transition: background 100ms ease, border-color 100ms ease;
+    }
+
+    .settings-font-opt:hover {
+      background: #f0f5fc;
+    }
+
+    .settings-font-opt[aria-pressed="true"] {
+      border-color: var(--accent);
+      background: #eaf3ff;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .settings-font-opt:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 1px;
+    }
+
+    .settings-reset {
+      margin-top: 6px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 0;
+      text-align: left;
+      text-decoration: underline;
+      font-family: var(--slide-font);
+    }
+
+    .settings-reset:hover {
+      color: var(--text);
+    }
+
+    .settings-reset:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
     }
 
     .delimiter-toggle {
@@ -1331,6 +1480,9 @@
   <button id="searchToggle" class="search-toggle" type="button" aria-label="Search slides" title="Search slides" aria-controls="searchPanel" aria-expanded="false">
     <span class="material-symbols-outlined" aria-hidden="true">search</span>
   </button>
+  <button id="settingsToggle" class="settings-toggle" type="button" aria-label="Interface settings" title="Interface settings" aria-controls="settingsPanel" aria-expanded="false">
+    <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+  </button>
   <button id="prevArrow" class="nav-arrow left" type="button" aria-label="Previous slide" hidden>
     <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
   </button>
@@ -1344,6 +1496,13 @@
     <button id="searchPrev" class="search-nav" type="button" aria-label="Previous match">↑</button>
     <button id="searchNext" class="search-nav" type="button" aria-label="Next match">↓</button>
     <button id="searchClose" class="search-close" type="button" aria-label="Close search">✕</button>
+  </section>
+  <section id="settingsPanel" class="settings-panel" role="region" aria-label="Interface settings" hidden>
+    <div class="delimiter-section-title">Background</div>
+    <div class="settings-swatches" role="group" aria-label="Background colour"></div>
+    <div class="delimiter-section-title" style="margin-top:8px">Font</div>
+    <div class="settings-fonts" role="group" aria-label="Font choice"></div>
+    <button class="settings-reset" type="button" id="settingsReset">Reset to defaults</button>
   </section>
   <div id="srStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
@@ -1390,6 +1549,10 @@
     const notesDelimiterInputEl = document.getElementById("notesDelimiterInput");
     const delimiterApplyEl = document.getElementById("delimiterApply");
     const delimiterGuideEl = document.getElementById("delimiterGuide");
+    const settingsToggleEl = document.getElementById("settingsToggle");
+    const settingsPanelEl = document.getElementById("settingsPanel");
+    const settingsSwatchesEl = settingsPanelEl?.querySelector(".settings-swatches");
+    const settingsFontsEl = settingsPanelEl?.querySelector(".settings-fonts");
     const arrowsToggleEl = document.getElementById("arrowsToggle");
     const searchToggleEl = document.getElementById("searchToggle");
     const searchPanelEl = document.getElementById("searchPanel");
@@ -1406,6 +1569,26 @@
       slide: "---",
       notes: "--"
     };
+
+    const BG_PRESETS = {
+      cloud:    { a: "#ffffff", b: "#f2f5fa" },
+      warm:     { a: "#fffaf5", b: "#f5ede0" },
+      sage:     { a: "#f5f9f5", b: "#e8f2e8" },
+      slate:    { a: "#f4f8fc", b: "#e4eef8" },
+      lavender: { a: "#f8f5fc", b: "#ede4f7" },
+      dusk:     { a: "#f3f2f0", b: "#e5e2dc" },
+    };
+
+    const FONT_PRESETS = {
+      sans:  { label: "Sans-serif", stack: '"Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif' },
+      serif: { label: "Serif",      stack: 'Georgia, "Times New Roman", serif' },
+      round: { label: "Rounded",    stack: '"Trebuchet MS", "Gill Sans", sans-serif' },
+      mono:  { label: "Monospace",  stack: 'ui-monospace, "SF Mono", "Fira Code", monospace' },
+    };
+
+    const SETTINGS_DEFAULTS = { bg: "cloud", font: "sans" };
+    const SETTINGS_KEY = "slidedeckSettings";
+    const appSettings = { ...SETTINGS_DEFAULTS };
     let delimiterAnchorEl = null;
 
     function announceStatus(message) {
@@ -2041,6 +2224,91 @@
         </ul>
       `;
     }
+
+    // ── Settings ──────────────────────────────────────────────────────────
+
+    function applySettings({ bg, font }) {
+      const bgPreset = BG_PRESETS[bg] || BG_PRESETS.cloud;
+      const fontPreset = FONT_PRESETS[font] || FONT_PRESETS.sans;
+      const root = document.documentElement.style;
+      root.setProperty("--bg-a", bgPreset.a);
+      root.setProperty("--bg-b", bgPreset.b);
+      root.setProperty("--slide-font", fontPreset.stack);
+      appSettings.bg = bg;
+      appSettings.font = font;
+      saveSettings();
+      renderSettingsUI();
+    }
+
+    function saveSettings() {
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify({ bg: appSettings.bg, font: appSettings.font }));
+      } catch (_) {}
+    }
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(SETTINGS_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.bg && BG_PRESETS[parsed.bg])     appSettings.bg   = parsed.bg;
+          if (parsed.font && FONT_PRESETS[parsed.font]) appSettings.font = parsed.font;
+        }
+      } catch (_) {}
+      applySettings(appSettings);
+    }
+
+    function renderSettingsUI() {
+      if (!settingsSwatchesEl || !settingsFontsEl) return;
+
+      settingsSwatchesEl.innerHTML = Object.entries(BG_PRESETS).map(([key, { a, b }]) => `
+        <button class="settings-swatch" type="button"
+          data-settings-bg="${key}"
+          aria-pressed="${key === appSettings.bg}"
+          aria-label="${key} background"
+          title="${key}"
+          style="background: linear-gradient(135deg, ${a} 50%, ${b} 100%);">
+        </button>
+      `).join("");
+
+      settingsFontsEl.innerHTML = Object.entries(FONT_PRESETS).map(([key, { label, stack }]) => `
+        <button class="settings-font-opt" type="button"
+          data-settings-font="${key}"
+          aria-pressed="${key === appSettings.font}"
+          style="font-family: ${stack}">
+          ${label}
+        </button>
+      `).join("");
+    }
+
+    let settingsAnchorEl = null;
+
+    function setSettingsPanelOpen(open, anchorEl = null) {
+      if (!settingsPanelEl) return;
+      settingsPanelEl.hidden = !open;
+      if (settingsToggleEl) settingsToggleEl.setAttribute("aria-expanded", String(open));
+      if (open) {
+        if (anchorEl) settingsAnchorEl = anchorEl;
+        renderSettingsUI();
+        positionSettingsPanel(settingsAnchorEl);
+      }
+    }
+
+    function positionSettingsPanel(anchorEl) {
+      if (!settingsPanelEl || !anchorEl || settingsPanelEl.hidden) return;
+      const rect = anchorEl.getBoundingClientRect();
+      const panelRect = settingsPanelEl.getBoundingClientRect();
+      const margin = 12;
+      const gap = 10;
+      let top = rect.top - panelRect.height - gap;
+      if (top < margin) top = rect.bottom + gap;
+      let left = rect.right - panelRect.width;
+      if (left < margin) left = margin;
+      settingsPanelEl.style.top  = `${top}px`;
+      settingsPanelEl.style.left = `${left}px`;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
 
     function renderDelimiterUI() {
       delimiterOptionEls.forEach((option) => {
@@ -2732,6 +3000,34 @@
     });
     window.addEventListener("resize", updateSlideAlignment);
 
+    // ── Settings panel events ─────────────────────────────────────────────
+    settingsToggleEl?.addEventListener("click", () => {
+      setSettingsPanelOpen(settingsPanelEl.hidden, settingsToggleEl);
+    });
+
+    settingsPanelEl?.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-settings-bg], [data-settings-font], #settingsReset");
+      if (!btn) return;
+      e.stopPropagation(); // prevent bubbling to the outside-click handler after innerHTML is replaced
+      if (btn.dataset.settingsBg)   applySettings({ ...appSettings, bg:   btn.dataset.settingsBg });
+      if (btn.dataset.settingsFont) applySettings({ ...appSettings, font: btn.dataset.settingsFont });
+      if (btn.id === "settingsReset") applySettings({ ...SETTINGS_DEFAULTS });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!settingsPanelEl?.hidden &&
+          !settingsPanelEl.contains(e.target) &&
+          !settingsToggleEl.contains(e.target)) { // use contains() to cover clicks on the icon span inside the button
+        setSettingsPanelOpen(false);
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (!settingsPanelEl?.hidden) positionSettingsPanel(settingsAnchorEl);
+    });
+    // ─────────────────────────────────────────────────────────────────────
+
+    loadSettings();
     renderSlide();
   </script>
 </body>

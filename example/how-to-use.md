@@ -65,13 +65,11 @@ Speaker notes support full Markdown formatting — bullet points, bold, code, et
 
 ## Slide Timing
 
-Add a duration hint to any notes delimiter:
+Add a duration hint directly on the notes delimiter line:
 
-```
---  duration: 2m
--- duration: 90s
--- duration: 1m30s
-```
+- `-- duration: 2m` — minutes
+- `-- duration: 90s` — seconds
+- `-- duration: 1m30s` — minutes and seconds combined
 
 Once durations are set, a **progress bar** appears at the bottom of the slide.
 A **global timer** tracks your total session progress across all slides.

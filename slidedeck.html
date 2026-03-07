@@ -1058,6 +1058,107 @@
       outline-offset: 1px;
     }
 
+    /* ── Load from URL panel ── */
+    .url-load-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #ffffff;
+      border: 1px solid #d5deeb;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(21, 34, 54, 0.16);
+      padding: 10px;
+      max-width: min(420px, calc(100vw - 84px));
+    }
+
+    .url-load-panel[hidden] {
+      display: none;
+    }
+
+    .url-load-panel-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .url-load-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #c6d2e4;
+      border-radius: 8px;
+      padding: 8px 9px;
+      font-size: 0.9rem;
+      color: #1f2b3f;
+    }
+
+    .url-load-input:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 1px;
+      border-color: #7ea9d6;
+    }
+
+    .url-load-submit {
+      padding: 0 14px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid #1c7ed6;
+      background: #1c7ed6;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .url-load-submit:hover {
+      background: #1971c2;
+      border-color: #1971c2;
+    }
+
+    .url-load-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .url-load-submit:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 1px;
+    }
+
+    .url-load-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid #c9d4e5;
+      background: #fff;
+      color: #2f3d55;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .url-load-close:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 1px;
+    }
+
+    .url-load-error {
+      font-size: 0.8rem;
+      color: #c0392b;
+      padding: 2px 4px;
+    }
+
+    .url-load-error[hidden] {
+      display: none;
+    }
+
     .search-hit {
       background: #ffe7a3;
       color: inherit;
@@ -1549,6 +1650,15 @@
     <div class="settings-fonts" role="group" aria-label="Font choice"></div>
     <button class="settings-reset" type="button" id="settingsReset">Reset to defaults</button>
   </section>
+  <section id="urlLoadPanel" class="url-load-panel" role="region" aria-label="Load Markdown from URL" hidden>
+    <div class="url-load-panel-row">
+      <label class="sr-only" for="urlLoadInput">Markdown file URL</label>
+      <input id="urlLoadInput" class="url-load-input" type="url" autocomplete="off" placeholder="https://raw.githubusercontent.com/…" />
+      <button id="urlLoadSubmit" class="url-load-submit" type="button">Load</button>
+      <button id="urlLoadClose" class="url-load-close" type="button" aria-label="Close">✕</button>
+    </div>
+    <div id="urlLoadError" class="url-load-error" aria-live="polite" hidden></div>
+  </section>
   <div id="srStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -1610,6 +1720,11 @@
     const prevArrowEl = document.getElementById("prevArrow");
     const nextArrowEl = document.getElementById("nextArrow");
     const srStatusEl = document.getElementById("srStatus");
+    const urlLoadPanelEl = document.getElementById("urlLoadPanel");
+    const urlLoadInputEl = document.getElementById("urlLoadInput");
+    const urlLoadSubmitEl = document.getElementById("urlLoadSubmit");
+    const urlLoadCloseEl = document.getElementById("urlLoadClose");
+    const urlLoadErrorEl = document.getElementById("urlLoadError");
     const delimiterDraft = {
       slideMode: "delimiter",
       slide: "---",
@@ -2646,6 +2761,11 @@
                   <span class="material-symbols-outlined">upload_file</span>
                   <span>Import MD file</span>
                 </button>
+                <span class="empty-flow-arrow">or</span>
+                <button class="empty-step" type="button" data-action="url-load-toggle" aria-label="Load from URL" title="Load from URL">
+                  <span class="material-symbols-outlined">link</span>
+                  <span>Load from URL</span>
+                </button>
               </div>
             </div>
           </div>
@@ -2895,6 +3015,56 @@
       event.target.value = "";
     }
 
+    function setUrlLoadPanelOpen(open) {
+      if (!urlLoadPanelEl) return;
+      urlLoadPanelEl.hidden = !open;
+      if (open && urlLoadInputEl) {
+        urlLoadInputEl.focus();
+        if (urlLoadErrorEl) urlLoadErrorEl.hidden = true;
+      }
+    }
+
+    async function loadFromUrl(url) {
+      const trimmed = String(url || "").trim();
+      if (!trimmed) return;
+      if (!trimmed.startsWith("http")) {
+        if (urlLoadErrorEl) {
+          urlLoadErrorEl.textContent = "Please enter a valid http(s) URL.";
+          urlLoadErrorEl.hidden = false;
+        }
+        return;
+      }
+      if (urlLoadSubmitEl) {
+        urlLoadSubmitEl.disabled = true;
+        urlLoadSubmitEl.textContent = "Loading…";
+      }
+      if (urlLoadErrorEl) urlLoadErrorEl.hidden = true;
+      try {
+        const response = await fetch(trimmed);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const text = await response.text();
+        state.sourceMarkdown = text;
+        state.slides = parseSlides(text);
+        state.index = 0;
+        if (state.search.query.trim()) rebuildSearchResults();
+        setUrlLoadPanelOpen(false);
+        renderSlide();
+      } catch (err) {
+        const msg = String(err?.message || err);
+        if (urlLoadErrorEl) {
+          urlLoadErrorEl.textContent = msg.toLowerCase().includes("failed to fetch") || msg.toLowerCase().includes("networkerror")
+            ? "Network error — check the URL or the server's CORS settings."
+            : `Could not load: ${msg}`;
+          urlLoadErrorEl.hidden = false;
+        }
+      } finally {
+        if (urlLoadSubmitEl) {
+          urlLoadSubmitEl.disabled = false;
+          urlLoadSubmitEl.textContent = "Load";
+        }
+      }
+    }
+
     slideEl.addEventListener("click", (event) => {
       const target = event.target.closest("[data-action]");
       if (!target) {
@@ -2903,6 +3073,9 @@
       const action = target.getAttribute("data-action");
       if (action === "upload") {
         fileInputEl.click();
+      }
+      if (action === "url-load-toggle") {
+        setUrlLoadPanelOpen(true);
       }
       if (action === "delimiter-toggle") {
         if (delimiterPanelEl.hidden) {
@@ -3095,6 +3268,21 @@
 
     window.addEventListener("resize", () => {
       if (!settingsPanelEl?.hidden) positionSettingsPanel(settingsAnchorEl);
+    });
+    // ─────────────────────────────────────────────────────────────────────
+
+    // ── Load from URL events ───────────────────────────────────────────────
+    urlLoadCloseEl?.addEventListener("click", () => {
+      setUrlLoadPanelOpen(false);
+    });
+
+    urlLoadSubmitEl?.addEventListener("click", () => {
+      loadFromUrl(urlLoadInputEl?.value);
+    });
+
+    urlLoadInputEl?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loadFromUrl(urlLoadInputEl.value);
+      if (e.key === "Escape") setUrlLoadPanelOpen(false);
     });
     // ─────────────────────────────────────────────────────────────────────
 
